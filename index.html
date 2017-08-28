@@ -1,15 +1,17 @@
 <html>
 <head>
 	<title>1942 Game</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 <style type="text/css">
 	body{
 		background-color:black;
+		margin: 0px;
 	}
 	#container{
-		background: url('background.jpg');
+		background: url('bgimg.jpg');
 		width:1000px;
-		height:550px;
+		height:560px;
 	}
 	#hero{
 		background: url('1942.gif');
@@ -24,9 +26,10 @@
 		width:28px;
 		height:28px;
 		position:absolute;
+		padding-left: 5px;
 	}
 	.bullet{
-		background: url('1942.gif');
+		background-image: url('1942.gif');
 		background-position: -185px -400px;
 		width:18px;
 		height:18px;
@@ -36,28 +39,44 @@
 		position:absolute;
 		border:10px solid red;
 		top:20px;
-		left:800px;
+		left:1000px;
 		background-color:white;
 		padding:10px;
 		font-size:30px;
 		font-family: Arial;	
 	}
+
+	.enemy2{
+		background: url('1942.gif');
+		background-position: -60px -10px;
+		width:28px;
+		height:28px;
+		position:absolute;
+	}
+
+	.enemy3{
+		background: url('1942.gif');
+		background-position: -150px -5px;
+		width:28px;
+		height:28px;
+		position:absolute;
+	}
 </style>
 </head>
 <body>
 	<div id='container'>
-		<div id='hero' style='top:300px; left:300px;'></div>
+		<div id='hero' style ='top:520px;  left:540px;'></div>
 		<div id='enemies'>
-			<div class='enemy1' style='top:100px; left:100px;'></div>
+			<!-- <div class='enemy1' style='top:100px; left:100px;'></div>
 			<div class='enemy1' style='top:100px; left:200px;'></div>
 			<div class='enemy1' style='top:100px; left:300px;'></div>
-			<div class='enemy1' style='top:100px; left:400px;'></div>
+			<div class='enemy1' style='top:100px; left:400px;'></div> -->
 		</div>
 		<div id='bullets'>
-			<div class='bullet' style='top:150px; left:200px;'></div>
+			<!-- <div class='bullet' style='top:150px; left:200px;'></div>
 			<div class='bullet' style='top:250px; left:200px;'></div>
 			<div class='bullet' style='top:350px; left:200px;'></div>
-			<div class='bullet' style='top:450px; left:200px;'></div>
+			<div class='bullet' style='top:450px; left:200px;'></div> -->
 		</div>	
 	</div>
 
@@ -65,6 +84,175 @@
 
 
 <script>
+	function displayHero(a){
+		$('#hero').css('top',a.y * 20 +"px");
+		$('#hero').css('left',a.x * 20 +"px");
+	}
+
+	function displayEnemies(b){
+		for(var i = 0; i < b.length; i++){
+			$('#'+i).css('top', b[i].y * 10 +"px");
+			$('#'+i).css('left', b[i].x * 10 +"px");
+		}
+	}
+	function displayType2(f){
+		for(var i = 0; i < f.length; i++){
+			$('#'+(i+10)).css('top', f[i].y * 10 +"px");
+			$('#'+(i+10)).css('left', f[i].x * 10 +"px");
+		}
+	}
+	function displayType3(g){
+		for(var i = 0; i < g.length; i++){
+			$('#'+(i+20)).css('top', g[i].y * 10 +"px");
+			$('#'+(i+20)).css('left', g[i].x * 10 +"px");
+		}
+	}
+
+	function createEnemines(c){
+		for(var i = 0; i < c.length; i++){
+			var output = "<div class='enemy1' id="+i+"></div>";
+			$('#enemies').append(output);
+		}
+	}
+
+	function createType2(d){
+		for(var i = 10; i < d.length+10; i++){
+			var output = "<div class='enemy2' id="+i+"></div>";
+			$('#enemies').append(output);
+		}
+	}
+
+	function createType3(e){
+		for(var i = 20; i < e.length+20; i++){
+			var output = "<div class='enemy3' id="+i+"></div>";
+			$('#enemies').append(output);
+		}
+	}
+
+	function createBullets(h){
+		var bull ="";
+		for(var i = 0; i < h.length; i++){
+			bull += "<div class='bullet' id='b"+i+"'></div>";
+		}
+		$('#bullets').html(bull);
+	}
+
+	function displayBullets(k){
+		for(var i = 0; i < k.length; i++){
+			$('#b'+i).css('top', k[i].y * 20 +"px");
+			$('#b'+i).css('left', k[i].x  * 20+5 +"px");
+		}
+	}
+		
+
+	$(document).ready(function(){
+		var hero = {
+			x:27, y:26
+		};
+
+		var enemies = [
+			{x:3, y:3},
+			{x:13, y:10},
+			{x:28, y:22},
+			{x:40, y:15},
+			{x:80, y:21},
+			{x:60, y:19},
+			{x:95, y:35},
+		];
+		var type2 =[
+		   	{x:17, y:17},
+			{x:22, y:13},
+			{x:85, y:26},
+		];
+
+		var type3 =[
+		   	{x:75, y:30},
+			{x:60, y:19},
+			{x:50, y:6},
+		]
+
+		var bullets = [];
+
+		createEnemines(enemies);
+		createType2(type2);
+		createType3(type3);
+
+
+		function moveEnemies(){
+			for(var i =0; i < enemies.length; i++){
+				enemies[i].y++;
+				if(enemies[i].y > 55) {
+					enemies[i].y = 0;
+					enemies[i].x = Math.floor(Math.random()*99);
+				}
+			}
+		}
+		function moveType2(){
+			for(var n =0; n < type2.length; n++){
+				type2[n].y++;
+				if(type2[n].y > 55) {
+					type2[n].y = 0;
+					type2[n].x = Math.floor(Math.random()*99);
+				}
+			}
+		}
+		function moveType3(){	
+			for(var m =0; m < type3.length; m++){
+				type3[m].y++;
+				if(type3[m].y > 55) {
+					type3[m].y = 0;
+					type3[m].x = Math.floor(Math.random()*99);
+				}
+			}
+		}
+
+		function moveBullets(){	
+			for(var j =0; j < bullets.length; j++){
+				bullets[j].y --;
+
+				if(bullets[j].y<1){
+					bullets[j] = bullets[bullets.length -1];
+					bullets.pop();
+					console.log(bullets);
+				}
+			}
+		}
+
+		function gameLoop(){
+			displayHero(hero);
+			moveEnemies();
+			displayEnemies(enemies);
+			moveType2();
+			displayType2(type2);
+			moveType3();
+		    displayType3(type3);
+			createBullets(bullets);
+			moveBullets();
+			displayBullets(bullets);
+		}
+		
+		
+		setInterval(gameLoop,100);
+
+		document.onkeydown = function(key){
+
+			if(key.keyCode == 37 && hero.x >0 ){
+				hero.x --;
+				displayHero(hero);
+			}else if(key.keyCode == 39 && hero.x < 49){
+				hero.x ++;
+				displayHero(hero);
+			}else if(key.keyCode == 38 && hero.y >0){
+				hero.y --;
+				displayHero(hero);
+			}else if(key.keyCode == 40 && hero.y < 27 ){
+				hero.y ++;
+				displayHero(hero);
+			}else if(key.keyCode == 32 ){
+				bullets.push({x:hero.x,y:hero.y});
+			}
+		}
+	})
 
 </script>
 
